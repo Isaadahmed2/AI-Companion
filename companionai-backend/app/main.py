@@ -83,11 +83,19 @@ def root():
 
 @app.get("/health", tags=["Health Check"])
 def health():
+    supabase_configured = bool(settings.SUPABASE_URL and "your-project" not in settings.SUPABASE_URL and settings.SUPABASE_KEY)
+    db_engine = "sqlite" if "sqlite" in str(engine.url) else "postgresql"
     return {
         "status": "ok",
         "app": settings.PROJECT_NAME,
         "version": settings.VERSION,
-        "environment": settings.ENVIRONMENT
+        "environment": settings.ENVIRONMENT,
+        "supabase": {
+            "configured": supabase_configured,
+            "url": settings.SUPABASE_URL if supabase_configured else None,
+            "status": "active" if supabase_configured else "not_configured"
+        },
+        "database": db_engine
     }
 
 @app.exception_handler(CompanionAPIException)
