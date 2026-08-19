@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, UploadFile, File
 from app.services.voice_service import VoiceService
 from app.security import get_current_user_id, get_optional_user_id
 from app.database import get_db
@@ -6,6 +6,10 @@ from app.models.user import User
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional, Dict, Any
+import logging
+import base64
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/voice", tags=["Voice Interaction"])
 voice_service = VoiceService()
@@ -17,6 +21,8 @@ class WebRTCCallRequest(BaseModel):
 
 class VoiceUploadRequest(BaseModel):
     audio_base64: str
+    filename: Optional[str] = "recording.webm"
+    content_type: Optional[str] = "audio/webm"
 
 @router.get("/voices")
 async def get_voices():
@@ -87,20 +93,70 @@ async def handle_webrtc_call(
         logger.error(f"WebRTC exchange failed: {e}", exc_info=True)
         raise HTTPException(status_code=502, detail=f"Voice connection failed: {str(e)}")
 
+@router.post("/transcribe")
+async def transcribe_voice_audio(
+    file: UploadFile = File(...),
+    user_id: Optional[str] = Depends(get_optional_user_id)
+):
+    """
+    Speech-to-Text Endpoint.
+    Transcribes uploaded audio files (WebM, WAV, MP3, M4A) into text using OpenAI Whisper STT model.
+    """
+    try:
+        audio_bytes = await file.read()
+        if not audio_bytes:
+            raise HTTPException(status_code=400, detail="Audio file is empty.")
+        
+        content_type = file.content_type or "audio/webm"
+        filename = file.filename or "recording.webm"
+        
+        result = await voice_service.transcribe_audio(
+            audio_bytes=audio_bytes,
+            filename=filename,
+            content_type=content_type
+        )
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Transcription error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Speech transcription failed: {str(e)}")
+
+@router.post("/upload")
+async def upload_voice_recording(
+    req: VoiceUploadRequest,
+    user_id: Optional[str] = Depends(get_optional_user_id)
+):
+    """
+    Base64 Voice Upload & Speech-to-Text Transcription.
+    Decodes base64 voice audio from microphone and runs Whisper Speech-to-Text model.
+    """
+    try:
+        # Strip data URL prefix if present (e.g., 'data:audio/webm;base64,...')
+        b64_data = req.audio_base64
+        if "," in b64_data:
+            b64_data = b64_data.split(",", 1)[1]
+            
+        audio_bytes = base64.b64decode(b64_data)
+        if not audio_bytes:
+            raise HTTPException(status_code=400, detail="Decoded audio data is empty.")
+            
+        result = await voice_service.transcribe_audio(
+            audio_bytes=audio_bytes,
+            filename=req.filename or "recording.webm",
+            content_type=req.content_type or "audio/webm"
+        )
+        return result
+    except Exception as e:
+        logger.error(f"Upload and transcribe error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Audio processing failed: {str(e)}")
+
 @router.post("/init-session")
-async def init_voice_session(user_id: Optional[str] = Depends(get_current_user_id)):
+async def init_voice_session(user_id: Optional[str] = Depends(get_optional_user_id)):
     session_data = await voice_service.get_realtime_session_token()
     return session_data
 
 @router.get("/stream-token")
-async def get_stream_token(user_id: Optional[str] = Depends(get_current_user_id)):
+async def get_stream_token(user_id: Optional[str] = Depends(get_optional_user_id)):
     session_data = await voice_service.get_realtime_session_token()
     return session_data
-
-@router.post("/upload")
-async def upload_voice_recording(req: VoiceUploadRequest, user_id: Optional[str] = Depends(get_current_user_id)):
-    return {
-        "transcript": "I felt a bit overwhelmed with work today, but looking forward to resting.",
-        "detected_emotion": "anxiety",
-        "mood_level": 4
-    }

@@ -1,34 +1,50 @@
 import React from 'react'
-import { Mic, MicOff, Radio } from 'lucide-react'
+import { Mic, Square, Sparkles, Loader2 } from 'lucide-react'
 
 interface VoiceInputProps {
   isListening: boolean;
+  isProcessing?: boolean;
   onStart: () => void;
   onStop: () => void;
 }
 
-export default function VoiceInput({ isListening, onStart, onStop }: VoiceInputProps) {
+export default function VoiceInput({ isListening, isProcessing = false, onStart, onStop }: VoiceInputProps) {
   return (
-    <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-indigo-500/30 rounded-2xl bg-indigo-950/20 text-center">
+    <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-indigo-500/30 rounded-2xl bg-indigo-950/20 text-center transition-all">
       <button
         type="button"
+        disabled={isProcessing}
         onClick={isListening ? onStop : onStart}
         className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 ${
-          isListening
-            ? 'bg-rose-500 text-white animate-pulse shadow-lg shadow-rose-500/50 scale-110'
+          isProcessing
+            ? 'bg-indigo-700/50 text-indigo-300 cursor-wait'
+            : isListening
+            ? 'bg-rose-500 hover:bg-rose-600 text-white animate-pulse shadow-lg shadow-rose-500/50 scale-110'
             : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 hover:scale-105'
         }`}
+        title={isListening ? 'Click to finish and transcribe with Whisper' : 'Click to start recording voice'}
       >
-        {isListening ? <MicOff className="w-8 h-8" /> : <Mic className="w-8 h-8" />}
+        {isProcessing ? (
+          <Loader2 className="w-8 h-8 animate-spin" />
+        ) : isListening ? (
+          <Square className="w-6 h-6 fill-current" />
+        ) : (
+          <Mic className="w-8 h-8" />
+        )}
       </button>
 
       <div className="mt-4">
         <p className="text-sm font-semibold text-slate-200">
-          {isListening ? 'Listening with OpenAI Realtime...' : 'Tap to speak your thoughts'}
+          {isProcessing
+            ? 'Transcribing audio with Whisper Speech-to-Text...'
+            : isListening
+            ? 'Recording... Tap square when finished'
+            : 'Tap to speak your thoughts'}
         </p>
-        <p className="text-xs text-slate-400 mt-1">
-          {isListening ? 'Speak freely. Click stop when finished.' : 'Share how you feel via voice'}
-        </p>
+        <div className="flex items-center justify-center gap-1.5 text-xs text-slate-400 mt-1">
+          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+          <span>Whisper Speech-to-Text Model</span>
+        </div>
       </div>
 
       {isListening && (

@@ -1,6 +1,8 @@
 from typing import Dict, Any, Optional, List
 import httpx
 import logging
+import io
+import base64
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -145,6 +147,53 @@ class VoiceService:
                     logger.error(f"Network error connecting to OpenAI Realtime: {re}")
 
         raise RuntimeError(f"Could not connect to OpenAI Realtime. Last error: {last_error}")
+
+    async def transcribe_audio(self, audio_bytes: bytes, filename: str = "audio.webm", content_type: str = "audio/webm") -> Dict[str, Any]:
+        """
+        Transcribe voice audio using OpenAI Whisper Speech-to-Text model (whisper-1).
+        """
+        if not self.api_key or self.api_key == "your-openai-api-key":
+            return {"transcript": "Microphone recording captured (STT API key required)."}
+
+        url = "https://api.openai.com/v1/audio/transcriptions"
+        
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                files = {
+                    "file": (filename, audio_bytes, content_type)
+                }
+                data = {
+                    "model": "whisper-1",
+                    "response_format": "verbose_json"
+                }
+                headers = {
+                    "Authorization": f"Bearer {self.api_key}"
+                }
+                response = await client.post(url, headers=headers, files=files, data=data)
+                if response.status_code == 200:
+                    res_json = response.json()
+                    transcript = res_json.get("text", "").strip()
+                    language = res_json.get("language", "en")
+                    duration = res_json.get("duration", 0)
+                    return {
+                        "transcript": transcript,
+                        "language": language,
+                        "duration": duration,
+                        "model": "whisper-1"
+                    }
+                else:
+                    logger.error(f"Whisper transcription failed ({response.status_code}): {response.text}")
+                    # Try basic json response format fallback
+                    data["response_format"] = "json"
+                    retry_res = await client.post(url, headers=headers, files=files, data=data)
+                    if retry_res.status_code == 200:
+                        return {"transcript": retry_res.json().get("text", "").strip(), "model": "whisper-1"}
+                    
+                    return {"transcript": "", "error": f"STT failed: {response.text}"}
+
+        except Exception as e:
+            logger.error(f"Error during audio transcription: {e}")
+            return {"transcript": "", "error": str(e)}
 
     async def get_realtime_session_token(self) -> Dict[str, Any]:
         """

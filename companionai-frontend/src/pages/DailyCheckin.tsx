@@ -13,7 +13,7 @@ import { MoodCheckinResult } from '../types'
 export default function DailyCheckin() {
   const navigate = useNavigate()
   const { submitMoodCheckin, isLoading } = useMood()
-  const { isListening, transcript, setTranscript, startListening, stopListening } = useVoice()
+  const { isListening, isProcessing, transcript, setTranscript, startListening, stopListening } = useVoice()
 
   const [moodLevel, setMoodLevel] = useState<number>(6)
   const [message, setMessage] = useState<string>('')
@@ -116,8 +116,14 @@ export default function DailyCheckin() {
               <div className="space-y-3">
                 <VoiceInput
                   isListening={isListening}
+                  isProcessing={isProcessing}
                   onStart={startListening}
-                  onStop={stopListening}
+                  onStop={async () => {
+                    const text = await stopListening()
+                    if (text) {
+                      setMessage(text)
+                    }
+                  }}
                 />
                 
                 {/* Live Speech-to-Speech Promo Card */}

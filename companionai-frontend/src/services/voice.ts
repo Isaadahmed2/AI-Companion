@@ -15,6 +15,14 @@ export interface VoiceSessionConfig {
   default_voice: string;
 }
 
+export interface TranscriptionResponse {
+  transcript: string;
+  language?: string;
+  duration?: number;
+  model?: string;
+  error?: string;
+}
+
 export const getVoiceSessionConfig = async (): Promise<VoiceSessionConfig> => {
   return apiClient.get('/voice/session-config')
 }
@@ -25,6 +33,20 @@ export const getAvailableVoices = async (): Promise<{ voices: VoicePersona[]; de
 
 export const sendWebRTCOffer = async (sdp: string, model?: string, voice?: string): Promise<{ sdp: string; model: string; status: string }> => {
   return apiClient.post('/voice/calls', { sdp, model, voice })
+}
+
+export const transcribeAudioBlob = async (blob: Blob): Promise<TranscriptionResponse> => {
+  const formData = new FormData()
+  formData.append('file', blob, 'recording.webm')
+  return apiClient.post('/voice/transcribe', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+export const uploadVoiceBase64 = async (audioBase64: string): Promise<TranscriptionResponse> => {
+  return apiClient.post('/voice/upload', { audio_base64: audioBase64 })
 }
 
 export const getRealtimeToken = async () => {
