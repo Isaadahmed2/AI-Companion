@@ -1,0 +1,602 @@
+# CompanionAI - Complete System Development Prompt
+
+## PROJECT OVERVIEW
+Build CompanionAI: An AI-powered Emotional Wellness Companion platform that helps users overcome loneliness through AI-supported activities, mood tracking, and personalized recommendations. The system combines NLP sentiment analysis, LLM-based empathetic responses, mood tracking, and future robotic integration.
+
+---
+
+## SYSTEM ARCHITECTURE DIAGRAM (From Uploaded Design)
+
+### Core Flow (5 Steps):
+1. **User Onboarding** - Sign up, basic info, interests, language preferences
+2. **Daily Check-in** - "How are you feeling?" mood selection, voice input (future)
+3. **AI Emotion Detection** - NLP + Sentiment Analysis, detect emotions, identify intensity, extract key topics
+4. **Empathetic AI Response** - LLM generates empathetic reply, validates feelings, builds trust
+5. **Personalized Recommendations** - Music, Activities, Comedy/Entertainment, Motivation/Stories, Social Connection, Daily Goals
+
+### Recommendation Modules (Emotion-Based):
+- **Music Recommendation**: Mood-based music, Calm/Uplifting/Motivational, Lo-fi/Instrumental/Nature Sounds, Play/Add to Playlist
+- **Games & Activities**: Puzzle, Memory Game, Sudoku, Word Games, Quiz, Daily Challenges
+- **Comedy & Entertainment**: Funny Videos, Memes, Stand-up Clips, Light-hearted Content
+- **Motivation & Inspiration**: Motivational Quotes, Success Stories, Affirmations, Positive Podcasts, Journaling Prompts
+- **Social Connection**: Match with people with similar interests, Join Clubs, Safe & Moderated Environment
+- **Daily Goals & Habit Tracker**: Set Daily Goals, Track Progress, Streaks, Reminders, Celebrate Small Wins
+
+### Continuous Companionship (Step 6):
+- AI checks in daily
+- Sends motivational messages
+- Encourages healthy habits
+- Adapts as user improves
+
+### Supporting Systems:
+7. **Mood & Progress Tracker** - Daily mood logs, Weekly/Monthly trends, Activity completion, Visual dashboard, Insights & suggestions
+8. **Parent/Friend Connect (Future)** - Allow trusted people to check in (optional), Emergency alerts, Support system
+9. **Data Storage & Privacy** - Secure user data, Encrypted conversations, User consent, Delete data option, Privacy-first approach
+
+### Technical Backend (Step 10):
+- **NLP & LLM**: Understands text, generates empathetic responses, context awareness
+- **Sentiment & Emotion Detection**: Detect emotion, analyze intensity, identify triggers
+- **Recommendation Engine**: Rule-based + ML, Content filtering, Personalization
+- **Database**: User profiles, Moods, Activities, Preferences
+- **APIs & Integrations**: Music API, Video/Media API, Notification API, Voice API (Future)
+- **Security**: Authentication, Authorization, Data encryption
+
+### Future Roadmap:
+- **Phase 1 (MVP - 2 weeks)**: Chat AI, Emotion matching, Music recommendation, Mood tracker, Web application
+- **Phase 2 (1-2 months)**: Voice input & response, More games & activities, Comedy & entertainment, Community matching, Advanced mood analytics, RAG for personalized wellness content
+- **Phase 3 (3-6 months)**: Android & iOS app, Website + Health integration, Multilingual support, AI Life Coach mode, Therapist/Counselor directory
+- **Phase 4 (6-12+ months)**: Physical robot with AI, Emotion recognition, Gesture recognition, Voice interaction, Expressive face/eyes, Movement & gestures, Reminders & daily assistance, Play music, games, activities, Encourage healthy routines, Build physical companion with emotional intelligence
+
+### Impact Goals:
+- Reduces loneliness, provides emotional support
+- Improves mental well-being, reduces stress
+- Builds healthy habits, encourages routine
+- Encourages social connection, reduces isolation
+- Creates future where AI & humans coexist harmoniously
+
+---
+
+## TECHNICAL STACK
+
+### Frontend (React.js)
+- **Framework**: React 18+ with TypeScript
+- **State Management**: Redux Toolkit or Zustand
+- **UI Component Library**: shadcn/ui or Material-UI
+- **Styling**: Tailwind CSS
+- **API Client**: Axios or React Query
+- **Authentication**: Supabase Auth Client
+- **Real-time**: Supabase Realtime
+- **Voice**: OpenAI Realtime API (WebSocket client)
+- **Charts & Analytics**: Recharts for mood trends
+- **Pages**: Onboarding, Daily Check-in, Mood Dashboard, Recommendations Hub, Activity Pages, Profile/Settings, Social Connect
+
+### Backend (Python FastAPI)
+- **Framework**: FastAPI with Pydantic v2
+- **Database ORM**: SQLAlchemy or Tortoise-ORM
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
+- **LLM Agent**: LangGraph with DeepSeek API
+- **Voice Processing**: OpenAI Realtime API (async handler)
+- **NLP & Sentiment**: HuggingFace Transformers, TextBlob, or transformers library
+- **Async**: AsyncIO with httpx for external API calls
+- **Job Queue**: Celery with Redis (for scheduled daily check-ins, notifications)
+- **Caching**: Redis
+- **Logging**: Python logging + Sentry for error tracking
+- **API Documentation**: Swagger/OpenAPI (auto-generated by FastAPI)
+- **Testing**: pytest with pytest-asyncio
+- **Environment**: python-dotenv for config
+
+### LLM & AI
+- **Main LLM**: DeepSeek API (for empathetic responses and analysis)
+- **NLP**: HuggingFace transformers (emotion detection model)
+- **Voice**: OpenAI Realtime API (speech-to-text, text-to-speech, real-time interaction)
+- **Agentic Framework**: LangGraph (workflow orchestration, multi-step reasoning)
+
+### Database (Supabase)
+- **Core Database**: PostgreSQL (Supabase hosted)
+- **Real-time Subscriptions**: Supabase Realtime
+- **Authentication**: Supabase Auth (email/password, Google OAuth)
+- **File Storage**: Supabase Storage (for user avatars, logs, exports)
+- **Vector Store (Optional Future)**: pgvector extension in Postgres for RAG
+
+### Deployment & Infrastructure
+- **Frontend Hosting**: Vercel, Netlify, or Firebase Hosting
+- **Backend Hosting**: Railway, Heroku, or DigitalOcean App Platform
+- **Environment**: Docker containers for consistency
+- **CI/CD**: GitHub Actions
+- **Monitoring**: Sentry (errors), PostHog or Mixpanel (analytics)
+- **Secrets Management**: Environment variables via hosting platform
+
+---
+
+## DATABASE SCHEMA (PostgreSQL via Supabase)
+
+```sql
+-- Users Table
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  display_name VARCHAR(255),
+  avatar_url TEXT,
+  language_preference VARCHAR(10) DEFAULT 'en',
+  interests JSONB DEFAULT '[]',
+  onboarding_completed BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Mood Logs Table
+CREATE TABLE mood_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  mood_level INT CHECK (mood_level BETWEEN 1 AND 10),
+  emotion TEXT, -- happy, sad, anxious, calm, etc.
+  intensity INT CHECK (intensity BETWEEN 1 AND 5),
+  message TEXT, -- User's description
+  detected_topics JSONB DEFAULT '[]', -- Extracted topics
+  detected_sentiment JSONB DEFAULT '{}', -- Sentiment analysis result
+  voice_input BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- AI Responses Table
+CREATE TABLE ai_responses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  mood_log_id UUID NOT NULL REFERENCES mood_logs(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  response_text TEXT NOT NULL,
+  llm_model VARCHAR(50) DEFAULT 'deepseek',
+  confidence_score FLOAT,
+  emotion_addressed TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Activities Table
+CREATE TABLE activities (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  category VARCHAR(50), -- music, game, comedy, motivation, social, goals
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  content_url TEXT,
+  metadata JSONB DEFAULT '{}',
+  active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- User Activity Log Table
+CREATE TABLE user_activity_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  activity_id UUID NOT NULL REFERENCES activities(id),
+  completed BOOLEAN DEFAULT FALSE,
+  duration_minutes INT,
+  rating INT CHECK (rating BETWEEN 1 AND 5),
+  feedback TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  completed_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Daily Goals Table
+CREATE TABLE daily_goals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  goal_text TEXT NOT NULL,
+  category VARCHAR(50),
+  completed BOOLEAN DEFAULT FALSE,
+  created_at DATE DEFAULT CURRENT_DATE,
+  completed_at TIMESTAMP WITH TIME ZONE
+);
+
+-- Recommendations Table
+CREATE TABLE recommendations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  mood_log_id UUID REFERENCES mood_logs(id) ON DELETE SET NULL,
+  activity_id UUID NOT NULL REFERENCES activities(id),
+  reason TEXT, -- Why this was recommended
+  relevance_score FLOAT,
+  clicked BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Connections (Social) Table
+CREATE TABLE user_connections (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  connected_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  shared_interests JSONB DEFAULT '[]',
+  connected_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, connected_user_id)
+);
+
+-- Notification Preferences Table
+CREATE TABLE notification_preferences (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  daily_checkin BOOLEAN DEFAULT TRUE,
+  motivational_messages BOOLEAN DEFAULT TRUE,
+  activity_reminders BOOLEAN DEFAULT TRUE,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Audit Log Table
+CREATE TABLE audit_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  action VARCHAR(100),
+  details JSONB,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create indexes for performance
+CREATE INDEX idx_mood_logs_user_id ON mood_logs(user_id);
+CREATE INDEX idx_mood_logs_created_at ON mood_logs(created_at DESC);
+CREATE INDEX idx_ai_responses_user_id ON ai_responses(user_id);
+CREATE INDEX idx_user_activity_logs_user_id ON user_activity_logs(user_id);
+CREATE INDEX idx_user_activity_logs_completed ON user_activity_logs(completed);
+CREATE INDEX idx_recommendations_user_id ON recommendations(user_id);
+```
+
+---
+
+## API ENDPOINTS SPECIFICATION
+
+### Authentication Endpoints
+```
+POST   /api/v1/auth/signup              - Register new user
+POST   /api/v1/auth/login               - Login with email/password
+POST   /api/v1/auth/google-auth         - Google OAuth callback
+POST   /api/v1/auth/refresh-token       - Refresh access token
+POST   /api/v1/auth/logout              - Logout user
+GET    /api/v1/auth/me                  - Get current user profile
+```
+
+### User Profile Endpoints
+```
+GET    /api/v1/users/profile            - Get user profile
+PUT    /api/v1/users/profile            - Update user profile
+PUT    /api/v1/users/preferences        - Update preferences & interests
+GET    /api/v1/users/stats              - Get user statistics
+```
+
+### Mood & Check-in Endpoints
+```
+POST   /api/v1/moods/checkin            - Submit daily check-in
+GET    /api/v1/moods/logs               - Get mood history (paginated)
+GET    /api/v1/moods/logs/{id}          - Get specific mood log
+GET    /api/v1/moods/trends             - Get mood trends (weekly/monthly)
+GET    /api/v1/moods/insights           - Get AI insights from mood data
+DELETE /api/v1/moods/logs/{id}          - Delete a mood log
+```
+
+### AI Response Endpoints
+```
+POST   /api/v1/ai/respond               - Get AI response to mood
+GET    /api/v1/ai/responses             - Get response history
+GET    /api/v1/ai/responses/{id}        - Get specific response
+```
+
+### Recommendations Endpoints
+```
+GET    /api/v1/recommendations          - Get personalized recommendations
+GET    /api/v1/recommendations/{id}     - Get specific recommendation details
+POST   /api/v1/recommendations/{id}/click - Track recommendation click
+POST   /api/v1/recommendations/{id}/feedback - Submit feedback on recommendation
+GET    /api/v1/recommendations/trending  - Get trending activities/content
+```
+
+### Activities Endpoints
+```
+GET    /api/v1/activities               - Get all activities (paginated, filterable)
+GET    /api/v1/activities/{id}          - Get activity details
+GET    /api/v1/activities/category/{category} - Get activities by category
+POST   /api/v1/activities/{id}/start    - Start an activity
+POST   /api/v1/activities/{id}/complete - Mark activity as complete
+POST   /api/v1/activities/{id}/rating   - Submit rating/feedback
+GET    /api/v1/activities/completed     - Get user's completed activities
+```
+
+### Daily Goals Endpoints
+```
+POST   /api/v1/goals                    - Create daily goal
+GET    /api/v1/goals                    - Get today's goals
+GET    /api/v1/goals/history            - Get goals history
+PUT    /api/v1/goals/{id}               - Update goal
+POST   /api/v1/goals/{id}/complete      - Mark goal as complete
+DELETE /api/v1/goals/{id}               - Delete goal
+```
+
+### Voice Endpoints
+```
+POST   /api/v1/voice/init-session       - Initialize OpenAI Realtime session
+POST   /api/v1/voice/upload             - Upload voice recording (fallback)
+GET    /api/v1/voice/stream-token       - Get session token for WebSocket
+```
+
+### Social Connection Endpoints
+```
+GET    /api/v1/social/matches           - Get matched users (similar interests)
+POST   /api/v1/social/connect/{user_id} - Send connection request
+GET    /api/v1/social/connections       - Get user's connections
+DELETE /api/v1/social/connections/{id}  - Remove connection
+GET    /api/v1/social/clubs             - Get available interest clubs
+POST   /api/v1/social/clubs/{id}/join   - Join a club
+```
+
+### Notification Endpoints
+```
+GET    /api/v1/notifications            - Get user notifications
+POST   /api/v1/notifications/{id}/read  - Mark notification as read
+PUT    /api/v1/notifications/preferences - Update notification preferences
+```
+
+### Analytics & Data Export
+```
+GET    /api/v1/analytics/dashboard      - Get analytics dashboard data
+GET    /api/v1/export/data              - Export user data (CSV/JSON)
+GET    /api/v1/export/mood-report       - Export mood report (PDF)
+```
+
+### Admin Endpoints (Protected)
+```
+GET    /api/v1/admin/users              - List all users (admin)
+GET    /api/v1/admin/activities         - Manage activities (admin)
+POST   /api/v1/admin/activities         - Create activity (admin)
+GET    /api/v1/admin/analytics          - Platform analytics (admin)
+```
+
+---
+
+## LANGGRAPH AGENTIC WORKFLOW
+
+### Main Agent: "CompanionAI Wellness Agent"
+
+**Purpose**: Orchestrate multi-step emotional support workflow using LangGraph
+
+```python
+# Pseudo-code structure
+
+from langgraph.graph import StateGraph, END
+
+class CompanionState(TypedDict):
+    user_id: str
+    user_message: str
+    mood_level: int
+    detected_emotion: str
+    detected_topics: list[str]
+    sentiment_scores: dict
+    ai_response: str
+    recommendations: list[dict]
+    action_taken: str
+
+# Define Nodes
+async def emotion_detection_node(state: CompanionState) -> CompanionState:
+    """Analyze user message for emotions, topics, sentiment"""
+    # Use HuggingFace NLP models for emotion/sentiment
+    # Extract key topics using NER/keyword extraction
+    # Return updated state
+
+async def llm_response_node(state: CompanionState) -> CompanionState:
+    """Generate empathetic AI response using DeepSeek"""
+    # Call DeepSeek API with conversation context
+    # Ensure response is empathetic and validates feelings
+    # Save response to database
+
+async def recommendation_engine_node(state: CompanionState) -> CompanionState:
+    """Generate personalized recommendations based on emotion"""
+    # Query activity database
+    # Score activities based on emotion and user history
+    # Return top 5 recommendations
+
+async def goal_setting_node(state: CompanionState) -> CompanionState:
+    """Suggest daily goals based on mood and recommendations"""
+    # Create or suggest daily goals
+    # Link to activities
+
+async def notification_node(state: CompanionState) -> CompanionState:
+    """Handle notifications and reminders"""
+    # Send notifications if user consented
+    # Schedule future check-ins
+
+# Build graph
+workflow = StateGraph(CompanionState)
+workflow.add_node("emotion_detection", emotion_detection_node)
+workflow.add_node("llm_response", llm_response_node)
+workflow.add_node("recommendations", recommendation_engine_node)
+workflow.add_node("goal_setting", goal_setting_node)
+workflow.add_node("notifications", notification_node)
+
+# Add edges
+workflow.add_edge("START", "emotion_detection")
+workflow.add_edge("emotion_detection", "llm_response")
+workflow.add_edge("llm_response", "recommendations")
+workflow.add_edge("recommendations", "goal_setting")
+workflow.add_edge("goal_setting", "notifications")
+workflow.add_edge("notifications", END)
+
+# Compile and run
+app = workflow.compile()
+```
+
+### Secondary Agent: "Content Recommendation Agent"
+- Runs periodically (daily/weekly)
+- Analyzes user mood trends
+- Suggests new activities, clubs, connections
+- Sends motivational content
+
+### Tertiary Agent: "Health Coach Agent" (Phase 2)
+- Tracks habit formation
+- Provides coaching based on progress
+- Adapts recommendations
+
+---
+
+## SECURITY & COMPLIANCE
+
+### Authentication & Authorization
+- **Supabase Auth**: Email/password + Google OAuth 2.0
+- **JWT Tokens**: Secure session management
+- **CORS**: Strict origin whitelist
+- **Rate Limiting**: 100 requests/minute per user
+- **API Key**: For service-to-service communication
+
+### Data Protection
+- **Encryption in Transit**: HTTPS/TLS
+- **Encryption at Rest**: Supabase automatic encryption
+- **PII Handling**: Minimal storage, GDPR compliant
+- **Audit Logs**: Track all data access and modifications
+- **Data Deletion**: User right to delete all data
+
+### Content Safety
+- **Content Moderation**: Filter harmful content in recommendations
+- **Community Guidelines**: Enforce safe social connections
+- **Emergency Protocol**: Detect high-risk language, provide crisis resources
+
+---
+
+## DEVELOPMENT GUIDELINES
+
+### Phase Breakdown:
+
+**Week 1-2 (MVP)**:
+- Setup FastAPI backend with Supabase
+- Setup React frontend with Supabase Auth
+- Implement user onboarding flow
+- Implement daily check-in (mood submission)
+- Integrate DeepSeek for basic empathetic responses
+- Setup LangGraph basic workflow
+- Implement mood tracker dashboard
+- Deploy to staging
+
+**Week 3-4**:
+- Voice integration (OpenAI Realtime API)
+- Expand recommendation engine
+- Social connection matching (MVP)
+- Notification system
+- Testing & optimization
+
+**Post-MVP**:
+- Mobile apps (React Native)
+- Advanced analytics
+- RAG for personalized wellness content
+- Physical robot integration
+- Multi-language support
+
+### Code Quality Standards:
+- TypeScript for frontend
+- Type hints for all Python functions
+- Unit tests (pytest for backend, Jest for frontend)
+- Integration tests for API endpoints
+- Minimum 70% code coverage
+- Documentation for all functions
+- Secure coding practices (input validation, SQL injection prevention)
+
+### Environment Setup:
+- Local: Docker Compose for backend + Postgres
+- Development: Staging environment with test Supabase project
+- Production: Monitored deployment with auto-scaling
+
+---
+
+## DELIVERABLES CHECKLIST
+
+### Documentation:
+- [ ] System Architecture Document
+- [ ] Database Schema Documentation
+- [ ] API Specification (OpenAPI/Swagger)
+- [ ] Frontend Component Architecture
+- [ ] Backend Service Structure
+- [ ] LangGraph Workflow Documentation
+- [ ] Deployment Guide
+- [ ] User Manual
+- [ ] Developer Setup Guide
+
+### Code:
+- [ ] Frontend (React) - production-ready
+- [ ] Backend (FastAPI) - production-ready
+- [ ] Database migrations
+- [ ] Docker configuration
+- [ ] Environment templates (.env.example)
+- [ ] Test suite (unit + integration)
+
+### API Documentation:
+- [ ] Postman Collection (exportable)
+- [ ] OpenAPI/Swagger JSON
+- [ ] API Endpoint Examples
+- [ ] Error Handling Guide
+- [ ] Rate Limiting Documentation
+
+### Deployment:
+- [ ] Docker images (frontend + backend)
+- [ ] GitHub Actions CI/CD pipeline
+- [ ] Deployment scripts
+- [ ] Monitoring setup (Sentry)
+- [ ] Analytics setup (PostHog/Mixpanel)
+- [ ] Domain & SSL configuration
+
+### Testing:
+- [ ] Unit tests
+- [ ] Integration tests
+- [ ] E2E tests (optional)
+- [ ] Security audit
+- [ ] Performance testing
+
+---
+
+## RELEVANT SKILLS TO APPLY
+
+Use these Claude skills to enhance the development process:
+- **engineering:system-design** - Design system architecture and service boundaries
+- **engineering:architecture** - Create ADR (Architecture Decision Records)
+- **engineering:documentation** - Write comprehensive technical documentation
+- **data:sql-queries** - Optimize database queries and schema design
+- **data:data-visualization** - Create mood trends visualization
+- **design:design-handoff** - Generate developer specs from UI designs
+- **frontend-design** - Design UI/UX for React components
+- **engineering:testing-strategy** - Plan comprehensive test strategies
+- **engineering:code-review** - Review code for quality and security
+- **engineering:deploy-checklist** - Pre-deployment verification
+
+---
+
+## TECHNICAL CONSTRAINTS & CONSIDERATIONS
+
+1. **LLM Rate Limits**: DeepSeek API may have rate limits; implement caching and request batching
+2. **Voice Latency**: OpenAI Realtime API requires low-latency WebSocket connections
+3. **Database Scalability**: Use connection pooling; consider read replicas for analytics queries
+4. **Cost Optimization**: Monitor API usage; implement caching for repeated requests
+5. **Privacy First**: Minimize data collection; transparent data usage policies
+6. **Accessibility**: WCAG 2.1 AA compliance for frontend
+7. **Mobile-First**: Responsive design for mobile users (future apps)
+8. **Offline Support**: Progressive Web App capabilities (future)
+
+---
+
+## SUCCESS METRICS
+
+- **User Engagement**: DAU, session duration, feature adoption
+- **Mental Health Impact**: Mood improvement trends, activity completion rate
+- **System Performance**: API response time <200ms, uptime >99.9%
+- **User Retention**: 30-day, 60-day, 90-day retention rates
+- **Community Growth**: Connection requests, club memberships, social interactions
+- **Safety Metrics**: Content moderation success, user feedback sentiment
+
+---
+
+## QUESTIONS FOR CLARIFICATION
+
+1. Do you want to implement authentication on day 1 or start with public access?
+2. Should recommendations be rule-based initially or use ML models?
+3. What's the priority: mobile app or web first?
+4. Budget for external APIs (DeepSeek, OpenAI, music/video services)?
+5. Real-time chat requirements? (WebSocket vs polling)
+6. Multilingual support priority countries/languages?
+7. Robot integration timeline and requirements?
+8. Data retention policy (how long to keep mood logs)?
+9. Backup and disaster recovery requirements?
+10. Integration with existing health platforms (Apple Health, Google Fit)?
+
+---
+
+END OF PROMPT
+```

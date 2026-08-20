@@ -1,0 +1,39 @@
+"""Application constants and wellness category definitions"""
+
+# Wellness Module Categories
+CATEGORY_MUSIC = "music"
+CATEGORY_GAME = "game"
+CATEGORY_COMEDY = "comedy"
+CATEGORY_MOTIVATION = "motivation"
+CATEGORY_SOCIAL = "social"
+CATEGORY_GOALS = "goals"
+
+ALL_CATEGORIES = [
+    CATEGORY_MUSIC,
+    CATEGORY_GAME,
+    CATEGORY_COMEDY,
+    CATEGORY_MOTIVATION,
+    CATEGORY_SOCIAL,
+    CATEGORY_GOALS,
+]
+
+# Supported Core Emotions
+EMOTION_JOY = "joy"
+EMOTION_SADNESS = "sadness"
+EMOTION_ANXIETY = "anxiety"
+EMOTION_ANGER = "anger"
+EMOTION_CALM = "calm"
+EMOTION_NEUTRAL = "neutral"
+
+ALL_EMOTIONS = [
+    EMOTION_JOY,
+    EMOTION_SADNESS,
+    EMOTION_ANXIETY,
+    EMOTION_ANGER,
+    EMOTION_CALM,
+    EMOTION_NEUTRAL,
+]
+
+# Default Rate Limits
+DEFAULT_RATE_LIMIT_REQUESTS = 100
+DEFAULT_RATE_LIMIT_WINDOW_SECONDS = 60

@@ -1,0 +1,973 @@
+{
+  "info": {
+    "name": "CompanionAI API",
+    "description": "Complete API documentation for CompanionAI - AI Emotional Wellness Companion",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePassword123!\",\n  \"display_name\": \"John Doe\",\n  \"language_preference\": \"en\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "signup"]
+            },
+            "description": "Register a new user account"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/auth/signup",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "auth", "signup"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"user\": {\n    \"id\": \"uuid\",\n    \"email\": \"user@example.com\",\n    \"display_name\": \"John Doe\",\n    \"created_at\": \"2026-08-19T10:00:00Z\"\n  },\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIs...\",\n  \"refresh_token\": \"eyJhbGciOiJIUzI1NiIs...\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Google OAuth Callback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_token\": \"eyJhbGciOiJSUzI1NiIs...\",\n  \"access_token\": \"ya29.a0AfH6SMB...\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/google-auth",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "google-auth"]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"eyJhbGciOiJIUzI1NiIs...\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/refresh-token",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "refresh-token"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "auth", "logout"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"display_name\": \"John Updated\",\n  \"avatar_url\": \"https://example.com/avatar.jpg\",\n  \"language_preference\": \"es\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Preferences",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"interests\": [\"music\", \"gaming\", \"reading\", \"yoga\"],\n  \"notification_preferences\": {\n    \"daily_checkin\": true,\n    \"motivational_messages\": true,\n    \"activity_reminders\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/preferences",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "preferences"]
+            }
+          }
+        },
+        {
+          "name": "Get User Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "users", "stats"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mood & Check-in",
+      "item": [
+        {
+          "name": "Submit Daily Check-in",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mood_level\": 6,\n  \"message\": \"Had a rough day at work, but trying to stay positive\",\n  \"voice_input\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/moods/checkin",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "moods", "checkin"]
+            },
+            "description": "Submit daily mood check-in. Returns AI emotion detection and empathetic response."
+          }
+        },
+        {
+          "name": "Get Mood Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/moods/logs?limit=10&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "moods", "logs"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Mood Log Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/moods/logs/{{mood_log_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "moods", "logs", "{{mood_log_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Mood Trends",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/moods/trends?period=weekly",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "moods", "trends"],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "weekly",
+                  "description": "weekly, monthly, all"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get AI Insights",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/moods/insights",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "moods", "insights"]
+            }
+          }
+        },
+        {
+          "name": "Delete Mood Log",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/moods/logs/{{mood_log_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "moods", "logs", "{{mood_log_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "AI Responses",
+      "item": [
+        {
+          "name": "Get AI Response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mood_log_id\": \"uuid\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/ai/respond",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "ai", "respond"]
+            }
+          }
+        },
+        {
+          "name": "Get Response History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/ai/responses?limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "ai", "responses"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Specific Response",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/ai/responses/{{response_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "ai", "responses", "{{response_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Recommendations",
+      "item": [
+        {
+          "name": "Get Personalized Recommendations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/recommendations?limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "recommendations"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Recommendation Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/recommendations/{{recommendation_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "recommendations", "{{recommendation_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Track Recommendation Click",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/recommendations/{{recommendation_id}}/click",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "recommendations", "{{recommendation_id}}", "click"]
+            }
+          }
+        },
+        {
+          "name": "Submit Recommendation Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"feedback\": \"Great recommendation, really helped me relax\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/recommendations/{{recommendation_id}}/feedback",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "recommendations", "{{recommendation_id}}", "feedback"]
+            }
+          }
+        },
+        {
+          "name": "Get Trending Activities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/recommendations/trending",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "recommendations", "trending"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Activities",
+      "item": [
+        {
+          "name": "Get All Activities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/activities?category=music&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "activities"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "music",
+                  "description": "music, game, comedy, motivation, social, goals"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Activity Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/activities/{{activity_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "activities", "{{activity_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Activities by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/activities/category/music",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "activities", "category", "music"]
+            }
+          }
+        },
+        {
+          "name": "Start Activity",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/activities/{{activity_id}}/start",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "activities", "{{activity_id}}", "start"]
+            }
+          }
+        },
+        {
+          "name": "Complete Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"duration_minutes\": 30\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/activities/{{activity_id}}/complete",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "activities", "{{activity_id}}", "complete"]
+            }
+          }
+        },
+        {
+          "name": "Submit Activity Rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"feedback\": \"This playlist really helped me unwind!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/activities/{{activity_id}}/rating",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "activities", "{{activity_id}}", "rating"]
+            }
+          }
+        },
+        {
+          "name": "Get Completed Activities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/activities/completed?limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "activities", "completed"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Daily Goals",
+      "item": [
+        {
+          "name": "Create Goal",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"goal_text\": \"Meditate for 10 minutes\",\n  \"category\": \"wellness\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/goals",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "goals"]
+            }
+          }
+        },
+        {
+          "name": "Get Today's Goals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/goals",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "goals"]
+            }
+          }
+        },
+        {
+          "name": "Get Goals History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/goals/history?days=30",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "goals", "history"],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "30"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Goal",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"goal_text\": \"Meditate for 15 minutes\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/goals/{{goal_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "goals", "{{goal_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Mark Goal Complete",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/goals/{{goal_id}}/complete",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "goals", "{{goal_id}}", "complete"]
+            }
+          }
+        },
+        {
+          "name": "Delete Goal",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/goals/{{goal_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "goals", "{{goal_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Voice",
+      "item": [
+        {
+          "name": "Initialize Realtime Session",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"language\": \"en\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/voice/init-session",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "voice", "init-session"]
+            }
+          }
+        },
+        {
+          "name": "Get Stream Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/voice/stream-token",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "voice", "stream-token"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Social Connection",
+      "item": [
+        {
+          "name": "Get Matched Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/social/matches?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "social", "matches"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Send Connection Request",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/social/connect/{{user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "social", "connect", "{{user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Connections",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/social/connections",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "social", "connections"]
+            }
+          }
+        },
+        {
+          "name": "Remove Connection",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/social/connections/{{connection_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "social", "connections", "{{connection_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Available Clubs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/social/clubs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "social", "clubs"]
+            }
+          }
+        },
+        {
+          "name": "Join Club",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/social/clubs/{{club_id}}/join",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "social", "clubs", "{{club_id}}", "join"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications?limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "notifications"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Mark as Read",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/{{notification_id}}/read",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "notifications", "{{notification_id}}", "read"]
+            }
+          }
+        },
+        {
+          "name": "Update Preferences",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"daily_checkin\": true,\n  \"motivational_messages\": true,\n  \"activity_reminders\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/preferences",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "notifications", "preferences"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics & Export",
+      "item": [
+        {
+          "name": "Get Dashboard Analytics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/analytics/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "analytics", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "Export User Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/export/data?format=json",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "export", "data"],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "json",
+                  "description": "json or csv"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Export Mood Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/export/mood-report",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "export", "mood-report"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "mood_log_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "response_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "recommendation_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "activity_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "goal_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "connection_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "club_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "notification_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
